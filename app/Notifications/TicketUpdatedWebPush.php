@@ -50,7 +50,9 @@ class TicketUpdatedWebPush extends Notification implements ShouldQueue
             'data' => [
                 'ticket_id' => (string) $this->ticket->id,
                 'type' => 'ticket.updated',
-                'url' => route('admin.tickets.show', $this->ticket->id),
+                'url' => $notifiable->role === 'user' 
+                    ? route('user.tickets.show', $this->ticket->id) 
+                    : route('admin.tickets.show', $this->ticket->id),
             ],
         ];
     }

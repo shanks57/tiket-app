@@ -1,6 +1,6 @@
-const CACHE_NAME = 'siperkasa-v1.0.0';
-const STATIC_CACHE = 'siperkasa-static-v1.0.0';
-const DYNAMIC_CACHE = 'siperkasa-dynamic-v1.0.0';
+const CACHE_NAME = 'siperkasa-v1.0.1';
+const STATIC_CACHE = 'siperkasa-static-v1.0.1';
+const DYNAMIC_CACHE = 'siperkasa-dynamic-v1.0.1';
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
@@ -86,37 +86,53 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Handle static assets and pages
+    // Handle navigation requests (pages) - ALWAYS Network First
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    // Update the cache with the newest version
+                    const responseClone = response.clone();
+                    caches.open(DYNAMIC_CACHE).then((cache) => {
+                        cache.put(request, responseClone);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    // Fallback to cache if network fails
+                    return caches.match(request).then((cachedResponse) => {
+                        return cachedResponse || caches.match('/offline');
+                    });
+                })
+        );
+        return;
+    }
+
+    // Handle static assets (images, fonts, scripts) - Cache First
     event.respondWith(
-        caches.match(request)
-            .then((cachedResponse) => {
-                if (cachedResponse) {
-                    return cachedResponse;
+        caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            return fetch(request).then((response) => {
+                // Don't cache non-successful responses or non-basic types
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
                 }
 
-                return fetch(request)
-                    .then((response) => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
-
-                        // Cache the response
-                        const responseClone = response.clone();
-                        caches.open(DYNAMIC_CACHE)
-                            .then((cache) => {
-                                cache.put(request, responseClone);
-                            });
-
-                        return response;
-                    })
-                    .catch(() => {
-                        // Return offline page for navigation requests
-                        if (request.mode === 'navigate') {
-                            return caches.match('/offline');
-                        }
+                // Cache static assets (like JS/CSS from build)
+                const url = new URL(request.url);
+                if (url.pathname.startsWith('/build/') || url.pathname.startsWith('/assets/')) {
+                    const responseClone = response.clone();
+                    caches.open(STATIC_CACHE).then((cache) => {
+                        cache.put(request, responseClone);
                     });
-            })
+                }
+
+                return response;
+            });
+        })
     );
 });
 

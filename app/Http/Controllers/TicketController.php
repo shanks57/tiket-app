@@ -203,20 +203,14 @@ class TicketController extends Controller
             }
         }
 
-        // Notify technicians assigned to this category
-        $category = TicketCategory::find($request->category_id);
-        $technicians = $category ? $category->technicians : collect();
-
-        // Fallback to all technicians if none assigned specifically to category
-        if ($technicians->isEmpty()) {
-            $technicians = User::where('role', 'technician')->get();
-        }
+        // Notify all technicians without exception
+        $technicians = User::where('role', 'technician')->get();
 
         foreach ($technicians as $technician) {
             try {
                 $technician->notify(new TicketCreatedWebPush($ticket));
             } catch (\Exception $e) {
-                Log::error("Failed to notify technician {$technician->id}: " . $e->getMessage());
+                \Log::error("Failed to notify technician {$technician->id}: " . $e->getMessage());
             }
         }
 
@@ -387,10 +381,10 @@ class TicketController extends Controller
 
         // Notify ticket owner & assignee (except the actor)
         $participants = collect([$ticket->user])->merge($ticket->assignees)->filter();
-        $participants->unique('id')->each(function ($participant) use ($user, $ticket) {
+        $participants->unique('id')->each(function ($participant) use ($user, $ticket, $request) {
             if ($participant->id === $user->id)
                 return;
-            $participant->notify(new TicketUpdatedWebPush($ticket, 'Pembaharuan kemajuan: ' . \Illuminate\Support\Str::limit($ticket->title, 80)));
+            $participant->notify(new TicketUpdatedWebPush($ticket, 'Progres baru: ' . \Illuminate\Support\Str::limit($request->note, 100)));
         });
 
         return redirect()->back()->with('success', 'Progres berhasil ditambahkan.');
@@ -428,6 +422,11 @@ class TicketController extends Controller
             'note' => $user->name . ' mengambil tiket ini.',
             'updated_by' => $user->id,
         ]);
+
+        // Notify ticket owner
+        if ($ticket->user && $ticket->user->id !== $user->id) {
+            $ticket->user->notify(new TicketUpdatedWebPush($ticket, "Tiket Anda telah diambil oleh {$user->name}."));
+        }
 
         return redirect()->back()->with('success', 'Berhasil mengambil tiket.');
     }
