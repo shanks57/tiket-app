@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { router, useForm, Link } from '@inertiajs/react';
+import { Head, router, useForm, Link } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import Pagination from '@/components/Pagination';
 
@@ -109,7 +109,8 @@ export default function Index({ tickets, filters, users, counts }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20 md:p-4 rounded-xl transition-colors duration-300">
+            <Head title="Tiket Pemeliharaan" />
+            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20   md:p-4 rounded-xl transition-colors duration-300">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6 text-center md:text-left">Tiket Pemeliharaan</h1>
 
                 {/* Counts */}

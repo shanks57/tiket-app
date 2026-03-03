@@ -164,7 +164,7 @@ export default function Show({ ticket, progress, attachments, comments }: Props)
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Tiket ${ticket.ticket_number}`} />
-            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl px-4 pt-4 pb-20 md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 transition-colors duration-300">
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl px-4 pt-4 pb-20   md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 transition-colors duration-300">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <Button variant="outline" onClick={() => router.visit('/user/tickets')} className="border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:text-blue-100">

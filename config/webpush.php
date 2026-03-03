@@ -23,6 +23,6 @@ return [
     'web_push' => [
         'ttl' => 86400, // Time to live in seconds (24 hours)
         'urgency' => 'normal', // normal, high, low
-        'topic' => env('APP_NAME', 'TicketApp'),
+        'topic' => env('APP_NAME', 'SIPERKASA'),
     ],
 ];

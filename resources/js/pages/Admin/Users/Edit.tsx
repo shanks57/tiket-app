@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { router, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { toast } from 'sonner';
 
@@ -57,7 +57,8 @@ export default function Edit({ user, categories }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20 md:p-4 rounded-xl transition-colors duration-300">
+            <Head title={`Edit Pengguna: ${user.name}`} />
+            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20   md:p-4 rounded-xl transition-colors duration-300">
                 <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6">Edit Profil Pengguna</h1>
 
                 <form onSubmit={handleSubmit} className="bg-gradient-to-br from-white to-blue-50 dark:from-slate-900 dark:to-slate-800 p-8 rounded-2xl shadow-xl dark:border dark:border-slate-800 max-w-2xl space-y-6">

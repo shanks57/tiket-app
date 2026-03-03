@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { toast } from 'sonner';
 
@@ -64,7 +64,8 @@ export default function ManageTechnicians({ category, technicians, assignedTechn
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl px-4 pt-4 pb-20 md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950 transition-colors duration-300">
+            <Head title="Tugaskan Teknisi" />
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl px-4 pt-4 pb-20   md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950 transition-colors duration-300">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">Tugaskan Teknisi</h1>
                     <p className="text-muted-foreground text-sm dark:text-gray-400">Atur siapa saja yang bertanggung jawab untuk kategori: <span className="font-bold text-blue-600 dark:text-blue-400">{category.name}</span></p>
@@ -85,8 +86,8 @@ export default function ManageTechnicians({ category, technicians, assignedTechn
                                     <div
                                         key={technician.id}
                                         className={`flex items-center space-x-3 p-4 border rounded-xl transition-all cursor-pointer group ${(Array.isArray(data.technician_ids) && data.technician_ids.includes(technician.id))
-                                                ? 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                                                : 'bg-white dark:bg-slate-950 border-slate-100 dark:border-slate-800/50 hover:border-blue-200 dark:hover:border-blue-800/50'
+                                            ? 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                                            : 'bg-white dark:bg-slate-950 border-slate-100 dark:border-slate-800/50 hover:border-blue-200 dark:hover:border-blue-800/50'
                                             }`}
                                         onClick={() => handleTechnicianToggle(technician.id)}
                                     >
@@ -99,8 +100,8 @@ export default function ManageTechnicians({ category, technicians, assignedTechn
                                         <Label htmlFor={`tech-${technician.id}`} className="cursor-pointer flex-1">
                                             <div className="flex flex-col">
                                                 <p className={`font-bold transition-colors ${(Array.isArray(data.technician_ids) && data.technician_ids.includes(technician.id))
-                                                        ? 'text-blue-700 dark:text-blue-300'
-                                                        : 'text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                                    ? 'text-blue-700 dark:text-blue-300'
+                                                    : 'text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                                     }`}>{technician.name}</p>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">@{technician.username} • {technician.email}</p>
                                             </div>

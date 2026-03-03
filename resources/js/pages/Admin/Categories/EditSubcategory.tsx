@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 
 interface Category {
@@ -45,7 +45,8 @@ export default function EditSubcategory({ subcategory, categories }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="flex flex-1 flex-col gap-6 rounded-xl px-4 pt-4 pb-10 md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950 transition-colors duration-300">
+            <Head title={`Edit Subkategori: ${subcategory.name}`} />
+            <div className="flex flex-1 flex-col gap-6 rounded-xl px-4 pt-4 pb-20 md:p-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950 transition-colors duration-300">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">Edit Subkategori</h1>
                     <p className="text-muted-foreground text-sm dark:text-gray-400">Perbarui rincian subkategori untuk "{subcategory.name}"</p>

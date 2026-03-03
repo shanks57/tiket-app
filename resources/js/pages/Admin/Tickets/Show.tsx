@@ -11,7 +11,7 @@ import { router, useForm } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { FileText, X, Wrench, MessageSquare, Clock } from 'lucide-react';
 import { useState } from 'react';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { SharedData } from '@/types';
 import { toast } from 'sonner';
 
@@ -189,7 +189,8 @@ export default function Show({ ticket, progress, attachments, comments, categori
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20 md:p-4 rounded-xl transition-colors duration-300">
+            <Head title={`Tiket #${ticket.ticket_number}`} />
+            <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-4 px-4 pb-20   md:p-4 rounded-xl transition-colors duration-300">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
                         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">Tiket #{ticket.ticket_number}</h1>
