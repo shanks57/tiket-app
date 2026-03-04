@@ -2,13 +2,19 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBpqyX_UZR3ju7GZC7OJoRm0pAgpkKzeyA",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "siperkasaapp.firebaseapp.com",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "siperkasaapp",
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "siperkasaapp.firebasestorage.app",
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "561606299801",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:561606299801:web:144b0f3d36f68ceabce808"
 };
+
+console.log('[FIREBASE] Init Config:', firebaseConfig);
+
+if (!firebaseConfig.projectId) {
+    console.warn('[FIREBASE] WARNING: projectId is missing from config!');
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
