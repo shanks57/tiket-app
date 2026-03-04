@@ -23,6 +23,14 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader
           npm ci --legacy-peer-deps
+
+      - name: 🏷 Generate Version & Build
+        run: |
+          VERSION_TAG="v$(node -p "require('./package.json').version")-$(git rev-parse --short HEAD)"
+          export VITE_APP_VERSION="$VERSION_TAG"
+          echo "Building version: $VITE_APP_VERSION"
+          # Inject version into Service Worker
+          sed -i "s/__APP_VERSION__/$VERSION_TAG/" public/sw.js
           npm run build
 
       - name: 🚀 Deploy via FTP

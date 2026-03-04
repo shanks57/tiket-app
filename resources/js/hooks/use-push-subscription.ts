@@ -19,27 +19,48 @@ export function usePushSubscription() {
     async function subscribe(vapidKey?: string) {
         if (!supported) throw new Error('Notifikasi tidak didukung di peramban ini.');
 
+        console.log('[PUSH] Starting subscription process...');
         const token = await requestForToken(vapidKey);
-        if (!token) throw new Error('Gagal mendapatkan token notifikasi. Pastikan izin diberikan.');
+
+        if (!token) {
+            console.error('[PUSH] Failed to get FCM token');
+            throw new Error('Gagal mendapatkan token notifikasi. Pastikan izin diberikan.');
+        }
+
+        console.log('[PUSH] Got FCM token:', token.substring(0, 20) + '...');
 
         const csrfMeta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
         const csrf = csrfMeta?.content;
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         if (csrf) headers['X-CSRF-TOKEN'] = csrf;
 
-        // Send to mobile device registration endpoint (used for FCM tokens)
-        await fetch('/mobile/devices', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers,
-            body: JSON.stringify({
-                token: token,
-                platform: 'web',
-                app_version: '1.0.0'
-            }),
-        });
+        console.log('[PUSH] Sending token to backend...');
 
-        return token;
+        try {
+            const response = await fetch('/mobile/devices', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers,
+                body: JSON.stringify({
+                    token: token,
+                    platform: 'web',
+                    app_version: '1.0.0'
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error('[PUSH] Backend registration failed:', result);
+                throw new Error(result.message || 'Gagal mendaftarkan perangkat ke server.');
+            }
+
+            console.log('[PUSH] Device registered successfully:', result);
+            return token;
+        } catch (err) {
+            console.error('[PUSH] Error during backend registration:', err);
+            throw err;
+        }
     }
 
     async function unsubscribe() {

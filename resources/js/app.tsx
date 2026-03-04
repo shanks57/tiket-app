@@ -83,6 +83,17 @@ async function initializeServiceWorker() {
 
         console.log('[APP] Service Worker registered successfully', registration);
 
+        // Listen for the "controllerchange" event, which fires when a new service worker
+        // takes over. This allows us to reload the page and ensure the user is
+        // always seeing the latest version.
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            console.log('[APP] New Service Worker version detected. Reloading for latest updates...');
+            window.location.reload();
+        });
+
         // Listen for updates
         registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
@@ -91,8 +102,7 @@ async function initializeServiceWorker() {
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                     // New service worker is ready to activate
-                    console.log('[APP] New Service Worker version available');
-                    // Optional: Show update prompt to user
+                    console.log('[APP] New version ready. It will activate and reload automatically.');
                 }
             });
         });

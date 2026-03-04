@@ -134,6 +134,11 @@ export function AppSidebar() {
             <SidebarFooter>
                 {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
+                <div className="px-4 py-2 border-t border-sidebar-border/50">
+                    <p className="text-[10px] text-muted-foreground font-mono opacity-50 text-center uppercase tracking-widest">
+                        v{import.meta.env.VITE_APP_VERSION || '1.0.0-local'}
+                    </p>
+                </div>
             </SidebarFooter>
         </Sidebar>
     );

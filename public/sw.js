@@ -1,6 +1,7 @@
-const CACHE_NAME = 'siperkasa-v1.0.1';
-const STATIC_CACHE = 'siperkasa-static-v1.0.1';
-const DYNAMIC_CACHE = 'siperkasa-dynamic-v1.0.1';
+const APP_VERSION = '__APP_VERSION__';
+const CACHE_NAME = `siperkasa-${APP_VERSION}`;
+const STATIC_CACHE = `siperkasa-static-${APP_VERSION}`;
+const DYNAMIC_CACHE = `siperkasa-dynamic-${APP_VERSION}`;
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
