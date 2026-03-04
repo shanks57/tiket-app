@@ -13,7 +13,7 @@ class MobileDeviceController extends Controller
     {
         $request->validate([
             'token' => 'required|string',
-            'platform' => 'nullable|in:android,ios,unknown',
+            'platform' => 'nullable|in:web,android,ios,unknown',
             'app_version' => 'nullable|string',
         ]);
 

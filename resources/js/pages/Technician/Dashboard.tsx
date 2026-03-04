@@ -8,6 +8,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { CheckCircle, Clock, Wrench, AlertTriangle, TrendingUp, FileText, Upload, MessageSquare, Info } from 'lucide-react';
 import { SlaInfoModal } from '@/components/sla-info-modal';
+import { PushSubscribeButton } from '@/components/PushSubscribeButton';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -128,6 +129,7 @@ export default function Dashboard({ stats, recentTickets, slas = [] }: Props) {
                     <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400 bg-clip-text text-transparent">Dasbor Teknisi</h1>
                     <div className="flex flex-col sm:flex-row gap-2">
                         <SlaInfoModal slas={slas} />
+                        <PushSubscribeButton />
                         <Button onClick={() => router.visit('/admin/tickets?assigned_to=me')} variant="outline" className="border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:text-blue-100">
                             Lihat Semua Tiket Saya
                         </Button>

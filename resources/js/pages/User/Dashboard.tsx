@@ -20,6 +20,7 @@ import {
     Calendar,
     Target
 } from 'lucide-react';
+import { PushSubscribeButton } from '@/components/PushSubscribeButton';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -139,12 +140,15 @@ export default function Dashboard({ stats, recentTickets }: Props) {
                         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">Dasbor Saya</h1>
                         <p className="text-muted-foreground text-sm md:text-base dark:text-gray-400">Pusat kontrol helpdesk Anda. Lacak tiket dan ajukan permintaan baru.</p>
                     </div>
-                    <Link href="/tickets/create" className="w-full sm:w-auto">
-                        <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-cyan-600 shadow-xl w-full sm:w-auto rounded-xl font-bold">
-                            <Plus className="h-4 w-4" />
-                            Buat Tiket
-                        </Button>
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <PushSubscribeButton />
+                        <Link href="/tickets/create" className="w-full sm:w-auto">
+                            <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-cyan-600 shadow-xl w-full sm:w-auto rounded-xl font-bold">
+                                <Plus className="h-4 w-4" />
+                                Buat Tiket
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Key Metrics */}

@@ -16,10 +16,10 @@ export function usePushSubscription() {
         return permission === 'granted';
     }
 
-    async function subscribe() {
+    async function subscribe(vapidKey?: string) {
         if (!supported) throw new Error('Notifikasi tidak didukung di peramban ini.');
 
-        const token = await requestForToken();
+        const token = await requestForToken(vapidKey);
         if (!token) throw new Error('Gagal mendapatkan token notifikasi. Pastikan izin diberikan.');
 
         const csrfMeta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;

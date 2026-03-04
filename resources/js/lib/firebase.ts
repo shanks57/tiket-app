@@ -19,7 +19,7 @@ const messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
 /**
  * Request permission and get registration token
  */
-export const requestForToken = async () => {
+export const requestForToken = async (passedVapidKey?: string) => {
     if (!messaging) return null;
 
     try {
@@ -30,7 +30,7 @@ export const requestForToken = async () => {
         }
 
         const currentToken = await getToken(messaging, {
-            vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+            vapidKey: passedVapidKey || import.meta.env.VITE_FIREBASE_VAPID_KEY
         });
 
         if (currentToken) {

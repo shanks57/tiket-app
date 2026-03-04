@@ -14,6 +14,7 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import { LogOut } from 'lucide-react';
+import { PushSubscribeButton } from '@/components/PushSubscribeButton';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -140,6 +141,19 @@ export default function Profile({
                             </>
                         )}
                     </Form>
+                </div>
+
+                <div className="space-y-6 mt-6 bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-slate-950 dark:via-blue-950/30 dark:to-emerald-950 p-6 rounded-xl transition-colors duration-300">
+                    <HeadingSmall
+                        title="Notifikasi Web"
+                        description="Aktifkan notifikasi untuk mendapatkan info terbaru tentang tiket Anda"
+                    />
+                    <div className="bg-white/60 dark:bg-slate-900/60 p-6 rounded-xl border border-blue-100 dark:border-slate-800 shadow-sm">
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                            Dapatkan notifikasi real-time saat ada pembaruan pada tiket yang Anda buat atau tugaskan.
+                        </p>
+                        <PushSubscribeButton />
+                    </div>
                 </div>
 
                 <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">

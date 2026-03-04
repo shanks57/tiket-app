@@ -28,8 +28,8 @@ jobs:
       - name: 🚀 Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: 145.79.14.32
-          username: u248076115.mbahban
+          server: 193.203.172.8
+          username: u440249744.dev
           password: PenakNgene123!
           server-dir: /
           local-dir: ./

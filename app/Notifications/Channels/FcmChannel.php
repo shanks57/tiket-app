@@ -19,6 +19,8 @@ class FcmChannel
         }
 
         $tokens = (array) $notifiable->routeNotificationForFcm();
+        \Log::debug("FCM: Found " . count($tokens) . " tokens for user {$notifiable->id}");
+        
         if (empty($tokens)) {
             return;
         }
@@ -84,10 +86,16 @@ class FcmChannel
         ];
 
         try {
-            Http::withToken($accessToken)
+            $response = Http::withToken($accessToken)
                 ->post($url, $payload);
+            
+            if ($response->failed()) {
+                \Log::error("FCM Send Failed for token " . substr($token, 0, 10) . "... : " . $response->body());
+            } else {
+                \Log::debug("FCM Send Success for token " . substr($token, 0, 10) . "...");
+            }
         } catch (\Exception $e) {
-            logger()->error("FCM Send Error: " . $e->getMessage());
+            \Log::error("FCM Send Error: " . $e->getMessage());
         }
     }
 }
