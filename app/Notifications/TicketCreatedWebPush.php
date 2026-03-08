@@ -3,11 +3,10 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\WebPush\WebPushMessage;
 
-class TicketCreatedWebPush extends Notification implements ShouldQueue
+class TicketCreatedWebPush extends Notification
 {
     use Queueable;
 
@@ -20,7 +19,13 @@ class TicketCreatedWebPush extends Notification implements ShouldQueue
 
     public function via($notifiable)
     {
-        return ['database', 'webpush', \App\Notifications\Channels\FcmChannel::class];
+        $channels = ['database', \App\Notifications\Channels\FcmChannel::class];
+        
+        if (class_exists(\NotificationChannels\WebPush\WebPushChannel::class)) {
+            $channels[] = 'webpush';
+        }
+        
+        return $channels;
     }
 
     public function toWebPush($notifiable, $notification)
@@ -29,24 +34,45 @@ class TicketCreatedWebPush extends Notification implements ShouldQueue
             ->title("Tiket baru: {$this->ticket->ticket_number}")
             ->icon('/assets/android/android-launchericon-192-192.png')
             ->body($this->ticket->title)
-            ->action('view', 'Lihat')
-            ->data(['url' => route('tickets.show', $this->ticket->id)]);
+            ->data(['url' => route('admin.tickets.show', $this->ticket->id)]);
     }
 
     public function toFcm($notifiable)
     {
+        $url = route('admin.tickets.show', $this->ticket->id);
+        $title = "Tiket baru: {$this->ticket->ticket_number}";
+        $body = $this->ticket->title;
+
         return [
             'notification' => [
-                'title' => "Tiket baru: {$this->ticket->ticket_number}",
-                'body' => $this->ticket->title,
-                'sound' => 'default',
+                'title' => $title,
+                'body' => $body,
+            ],
+            'android' => [
+                'priority' => 'high',
+                'notification' => [
+                    'sound' => 'default',
+                    'notification_priority' => 'PRIORITY_MAX',
+                    'visibility' => 'PUBLIC',
+                ],
+            ],
+            'apns' => [
+                'payload' => [
+                    'aps' => [
+                        'alert' => [
+                            'title' => $title,
+                            'body' => $body,
+                        ],
+                        'sound' => 'default',
+                    ],
+                ],
             ],
             'data' => [
                 'ticket_id' => (string) $this->ticket->id,
                 'type' => 'ticket.created',
-                'url' => $notifiable->role === 'user' 
-                    ? route('user.tickets.show', $this->ticket->id) 
-                    : route('admin.tickets.show', $this->ticket->id),
+                'url' => $url,
+                'title' => $title,
+                'body' => $body,
             ],
         ];
     }

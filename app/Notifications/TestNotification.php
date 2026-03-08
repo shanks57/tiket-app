@@ -6,17 +6,17 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\WebPush\WebPushMessage;
 
-class TicketUpdatedWebPush extends Notification
+class TestNotification extends Notification
 {
     use Queueable;
 
-    protected $ticket;
-    protected $summary;
+    protected $title;
+    protected $message;
 
-    public function __construct($ticket, string $summary = '')
+    public function __construct($title = "Test Notification", $message = "Ini adalah sebuah pesan percobaan.")
     {
-        $this->ticket = $ticket;
-        $this->summary = $summary;
+        $this->title = $title;
+        $this->message = $message;
     }
 
     public function via($notifiable)
@@ -32,36 +32,26 @@ class TicketUpdatedWebPush extends Notification
 
     public function toWebPush($notifiable, $notification)
     {
-        $url = $notifiable->role === 'user' 
-            ? route('user.tickets.show', $this->ticket->id) 
-            : route('admin.tickets.show', $this->ticket->id);
-
         return (new WebPushMessage)
-            ->title("Pembaruan tiket: {$this->ticket->ticket_number}")
+            ->title($this->title)
+            ->body($this->message)
             ->icon('/assets/android/android-launchericon-192-192.png')
-            ->body($this->summary ?: $this->ticket->title)
-            ->data(['url' => $url]);
+            ->data(['url' => route('dashboard')]);
     }
 
     public function toFcm($notifiable)
     {
-        $url = $notifiable->role === 'user' 
-            ? route('user.tickets.show', $this->ticket->id) 
-            : route('admin.tickets.show', $this->ticket->id);
-            
-        $title = "Tiket: {$this->ticket->ticket_number}";
-        $body = $this->summary ?: $this->ticket->title;
-
         return [
             'notification' => [
-                'title' => $title,
-                'body' => $body,
+                'title' => $this->title,
+                'body' => $this->message,
             ],
             'android' => [
                 'priority' => 'high',
                 'notification' => [
                     'sound' => 'default',
                     'notification_priority' => 'PRIORITY_MAX',
+                    'click_action' => 'FLUTTER_NOTIFICATION_CLICK', // For hybrid apps, but often triggers system bar
                     'visibility' => 'PUBLIC',
                 ],
             ],
@@ -69,19 +59,18 @@ class TicketUpdatedWebPush extends Notification
                 'payload' => [
                     'aps' => [
                         'alert' => [
-                            'title' => $title,
-                            'body' => $body,
+                            'title' => $this->title,
+                            'body' => $this->message,
                         ],
                         'sound' => 'default',
                     ],
                 ],
             ],
             'data' => [
-                'ticket_id' => (string) $this->ticket->id,
-                'type' => 'ticket.updated',
-                'url' => $url,
-                'title' => $title,
-                'body' => $body,
+                'type' => 'test.notification',
+                'url' => route('dashboard'),
+                'title' => $this->title,
+                'body' => $this->message,
             ],
         ];
     }
@@ -89,9 +78,9 @@ class TicketUpdatedWebPush extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => 'ticket_updated',
-            'ticket_id' => $this->ticket->id,
-            'summary' => $this->summary,
+            'type' => 'test_notification',
+            'title' => $this->title,
+            'message' => $this->message,
         ];
     }
 }

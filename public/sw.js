@@ -162,48 +162,41 @@ self.addEventListener('push', (event) => {
     }
 
     try {
-        const data = event.data.json();
+        const data = event.data ? event.data.json() : {};
+        console.log('[SW] Push data:', data);
+
+        // Try to get title and body from various possible paths
+        const title = data.title ||
+            (data.notification ? data.notification.title : null) ||
+            'SIPERKASA APP';
+
+        const body = data.body ||
+            (data.notification ? data.notification.body : null) ||
+            'Anda memiliki notifikasi baru';
+
         const options = {
-            body: data.body || '',
-            icon: data.icon || '/assets/android/android-launchericon-192-192.png',
+            body: body,
+            icon: data.icon || (data.notification ? data.notification.image : null) || '/assets/android/android-launchericon-192-192.png',
             badge: data.badge || '/assets/android/android-launchericon-96-96.png',
-            image: data.image || undefined,
-            vibrate: [100, 50, 100],
-            tag: data.tag || 'notification',
-            requireInteraction: data.requireInteraction || true,
+            image: data.image || (data.data ? data.data.image : null) || undefined,
+            vibrate: [200, 100, 200],
+            tag: data.tag || 'notification-' + Date.now(),
+            requireInteraction: true,
             data: {
                 dateOfArrival: Date.now(),
-                url: data.url || '/dashboard',
-                primaryKey: data.primaryKey || Date.now()
+                url: data.url || (data.data ? data.data.url : null) || '/dashboard',
             }
         };
 
-        // Add actions if available
-        if (data.actions && Array.isArray(data.actions)) {
-            options.actions = data.actions;
-        } else {
-            options.actions = [
-                {
-                    action: 'view',
-                    title: data.actionTitle || 'Lihat',
-                    icon: '/assets/android/android-launchericon-96-96.png'
-                },
-                {
-                    action: 'close',
-                    title: 'Tutup'
-                }
-            ];
-        }
-
         event.waitUntil(
-            self.registration.showNotification(data.title || 'Notifikasi', options)
+            self.registration.showNotification(title, options)
         );
     } catch (error) {
         console.error('[SW] Error processing push:', error);
-        // Fallback notification
+        const text = event.data ? event.data.text() : 'Notifikasi Baru';
         event.waitUntil(
-            self.registration.showNotification('Notifikasi Baru', {
-                body: event.data.text(),
+            self.registration.showNotification('Notifikasi', {
+                body: text,
                 icon: '/assets/android/android-launchericon-192-192.png',
             })
         );

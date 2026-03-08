@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Models\User;
+use App\Notifications\TestNotification;
+use Illuminate\Support\Facades\Notification;
 
 class NotificationController extends Controller
 {
@@ -44,5 +47,50 @@ class NotificationController extends Controller
         $user->unreadNotifications->each->markAsRead();
 
         return response()->json(['status' => 'ok']);
+    }
+
+    public function sendTestNotification(Request $request)
+    {
+        $user = $request->user();
+        
+        // Ensure only admin can send test notifications
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
+            'recipient_type' => 'required|in:all,technician,user',
+        ]);
+
+        $title = $request->input('title');
+        $message = $request->input('message');
+        $recipientType = $request->input('recipient_type');
+
+        $query = User::query();
+
+        if ($recipientType === 'technician') {
+            $query->where('role', 'technician');
+        } elseif ($recipientType === 'user') {
+            $query->where('role', 'user');
+        }
+
+        $users = $query->get();
+        
+        if ($users->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tidak ada user yang ditemukan untuk kategori: ' . $recipientType
+            ], 404);
+        }
+
+        // Use Notification facade to send to filtered users
+        Notification::send($users, new TestNotification($title, $message));
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Notifikasi dikirim ke ' . $users->count() . ' user (' . $recipientType . ').'
+        ]);
     }
 }

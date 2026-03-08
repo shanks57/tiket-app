@@ -81,10 +81,12 @@ class User extends Authenticatable
         return $this->hasMany(TicketProgress::class, 'updated_by');
     }
 
+    /*
     public function notifications()
     {
         return $this->hasMany(Notification::class);
     }
+    */
 
     public function attachments()
     {

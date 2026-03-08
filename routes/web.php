@@ -92,6 +92,9 @@ Route::middleware(['auth', 'verified', 'prevent-back-history'])->group(function 
         Route::get('subcategories/{subcategory}/edit', [CategoryController::class, 'editSubcategory'])->name('subcategories.edit');
         Route::put('subcategories/{subcategory}', [CategoryController::class, 'updateSubcategory'])->name('subcategories.update');
         Route::delete('subcategories/{subcategory}', [CategoryController::class, 'destroySubcategory'])->name('subcategories.destroy');
+
+        // Test Notifications
+        Route::post('notifications/test', [NotificationController::class, 'sendTestNotification'])->name('notifications.test');
     });
 });
 

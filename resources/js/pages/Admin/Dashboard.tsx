@@ -21,6 +21,7 @@ import {
     Wrench
 } from 'lucide-react';
 import { SlaInfoModal } from '@/components/sla-info-modal';
+import { TestNotificationButton } from '@/components/Admin/TestNotificationButton';
 import {
     Dialog,
     DialogContent,
@@ -197,6 +198,7 @@ export default function Dashboard({ stats, recentTickets, technicians = [], slas
                             </Button>
                         </Link>
                         <SlaInfoModal slas={slas} />
+                        <TestNotificationButton />
                         <Dialog open={isDownloadOpen} onOpenChange={setIsDownloadOpen}>
                             <DialogTrigger asChild>
                                 <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 shadow-lg">

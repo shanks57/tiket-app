@@ -18,13 +18,17 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log('[SW] Background message received: ', payload);
 
-    const notificationTitle = payload.notification.title || 'SIPERKASA APP';
+    const notificationTitle = payload.notification?.title || payload.data?.title || 'SIPERKASA APP';
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: payload.notification.image || payload.data?.icon || '/assets/android/android-launchericon-192-192.png',
+        body: payload.notification?.body || payload.data?.body || 'Anda memiliki notifikasi baru',
+        icon: payload.notification?.image || payload.data?.icon || '/assets/android/android-launchericon-192-192.png',
+        badge: '/assets/android/android-launchericon-96-96.png',
         data: {
             url: payload.data?.url || '/dashboard'
-        }
+        },
+        tag: 'notification-' + Date.now(),
+        requireInteraction: true,
+        vibrate: [200, 100, 200]
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
