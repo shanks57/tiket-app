@@ -1,4 +1,4 @@
-import { requestForToken } from '@/lib/firebase';
+import { requestForToken, deleteAppToken } from '@/lib/firebase';
 
 export function usePushSubscription() {
     const supported = typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window;
@@ -6,14 +6,11 @@ export function usePushSubscription() {
     async function isSubscribed() {
         if (!supported) return false;
 
-        // Check if we have a token in local storage or if permission is granted
         const permission = Notification.permission;
         if (permission !== 'granted') return false;
 
-        // Note: For FCM, we typically check if the user has a token registered in the backend
-        // For simplicity on the client-side, we can check if it's already in the browser's indexedDB via Firebase,
-        // but checking permission is usually enough for the UI toggle.
-        return permission === 'granted';
+        // Check localStorage to see if user previously opted in on this browser
+        return localStorage.getItem('push_enabled') === 'true';
     }
 
     async function subscribe(vapidKey?: string) {
@@ -27,14 +24,14 @@ export function usePushSubscription() {
             throw new Error('Gagal mendapatkan token notifikasi. Pastikan izin diberikan.');
         }
 
-        console.log('[PUSH] Got FCM token:', token.substring(0, 20) + '...');
-
         const csrfMeta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
         const csrf = csrfMeta?.content;
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
         if (csrf) headers['X-CSRF-TOKEN'] = csrf;
-
-        console.log('[PUSH] Sending token to backend...');
 
         try {
             const response = await fetch('/mobile/devices', {
@@ -55,7 +52,8 @@ export function usePushSubscription() {
                 throw new Error(result.message || 'Gagal mendaftarkan perangkat ke server.');
             }
 
-            console.log('[PUSH] Device registered successfully:', result);
+            localStorage.setItem('push_enabled', 'true');
+            console.log('[PUSH] Device registered successfully');
             return token;
         } catch (err) {
             console.error('[PUSH] Error during backend registration:', err);
@@ -66,21 +64,39 @@ export function usePushSubscription() {
     async function unsubscribe() {
         if (!supported) return;
 
-        // For FCM, we should get the token again to unregister it from the backend
-        const token = await requestForToken();
-        if (!token) return;
+        try {
+            // 1. Get current token to notify backend
+            const token = await requestForToken();
 
-        const csrfMeta2 = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
-        const csrf2 = csrfMeta2?.content;
-        const headers2: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (csrf2) headers2['X-CSRF-TOKEN'] = csrf2;
+            if (token) {
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+                const csrf = csrfMeta?.content;
+                const headers: Record<string, string> = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                };
+                if (csrf) headers['X-CSRF-TOKEN'] = csrf;
 
-        await fetch('/mobile/devices/unregister', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: headers2,
-            body: JSON.stringify({ token: token }),
-        });
+                // 2. Notify backend to unregister
+                await fetch('/mobile/devices/unregister', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers,
+                    body: JSON.stringify({ token: token }),
+                });
+            }
+
+            // 3. Deactivate on client-side (revoke token and clear storage)
+            await deleteAppToken();
+            localStorage.removeItem('push_enabled');
+
+            console.log('[PUSH] Unsubscribed successfully');
+        } catch (err) {
+            console.error('[PUSH] Error during unsubscription:', err);
+            // Even if backend fails, we should clear local state
+            localStorage.removeItem('push_enabled');
+        }
     }
 
     return { supported, isSubscribed, subscribe, unsubscribe };

@@ -14,6 +14,7 @@ export function PushSubscribeButton({ vapidKey }: { vapidKey?: string } = {}) {
                 setSubscribed(await isSubscribed());
                 setError(null);
             } catch (err) {
+                console.log(err);
                 setError(err instanceof Error ? err.message : 'Error checking subscription');
             }
         })();
@@ -29,13 +30,16 @@ export function PushSubscribeButton({ vapidKey }: { vapidKey?: string } = {}) {
         <button
             className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-gray-200 dark:border-slate-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
             onClick={async () => {
+                console.log("unsubscribe");
                 try {
                     setLoading(true);
                     await unsubscribe();
                     setSubscribed(false);
                     setError(null);
                 } catch (err) {
-                    setError(err instanceof Error ? err.message : 'Error unsubscribing');
+                    const msg = err instanceof Error ? err.message : 'Error unsubscribing';
+                    setError(msg);
+                    alert('Gagal menonaktifkan notifikasi: ' + msg);
                 } finally {
                     setLoading(false);
                 }
@@ -54,7 +58,9 @@ export function PushSubscribeButton({ vapidKey }: { vapidKey?: string } = {}) {
                     setSubscribed(true);
                     setError(null);
                 } catch (err) {
-                    setError(err instanceof Error ? err.message : 'Error subscribing');
+                    const msg = err instanceof Error ? err.message : 'Error subscribing';
+                    setError(msg);
+                    alert('Gagal mengaktifkan notifikasi: ' + msg);
                 } finally {
                     setLoading(false);
                 }

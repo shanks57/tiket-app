@@ -9,6 +9,8 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketCommentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MobileDeviceController;
+use App\Http\Controllers\PushSubscriptionController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -40,9 +42,6 @@ Route::middleware(['auth', 'verified', 'prevent-back-history'])->group(function 
     Route::post('/web-push/subscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('webpush.subscribe');
     Route::post('/web-push/unsubscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('webpush.unsubscribe');
 
-    // Mobile device registration for FCM (mobile app)
-    Route::post('/mobile/devices', [\App\Http\Controllers\MobileDeviceController::class, 'store'])->name('mobile.devices.store');
-    Route::post('/mobile/devices/unregister', [\App\Http\Controllers\MobileDeviceController::class, 'destroy'])->name('mobile.devices.destroy');
 
     // Notification routes
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -97,3 +96,16 @@ Route::middleware(['auth', 'verified', 'prevent-back-history'])->group(function 
 });
 
 require __DIR__ . '/settings.php';
+
+// Mobile device registration for FCM (Moved outside verified group)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/mobile/devices', [MobileDeviceController::class, 'store'])->name('mobile.devices.store');
+    Route::post('/mobile/devices/unregister', [MobileDeviceController::class, 'destroy'])->name('mobile.devices.destroy');
+    
+    Route::get('/debug-auth', function() {
+        return response()->json([
+            'check' => Auth::check(),
+            'user_id' => Auth::id(),
+        ]);
+    });
+});

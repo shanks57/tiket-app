@@ -16,7 +16,6 @@ class MobileDeviceController extends Controller
             'platform' => 'nullable|in:web,android,ios,unknown',
             'app_version' => 'nullable|string',
         ]);
-
         \Log::info('[MOBILE_DEVICE] Store Request:', $request->all());
 
         $user = $request->user() ?? Auth::user();
@@ -52,8 +51,20 @@ class MobileDeviceController extends Controller
     public function destroy(Request $request)
     {
         $request->validate(['token' => 'required|string']);
+        
+        \Log::info('[MOBILE_DEVICE] Unregister Request:', $request->all());
+        
         $user = $request->user() ?? Auth::user();
-        MobileDevice::where('token', $request->token)->where('user_id', $user->id)->delete();
-        return response()->json(['status' => 'unregistered']);
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $deleted = MobileDevice::where('token', $request->token)
+            ->where('user_id', $user->id)
+            ->delete();
+
+        \Log::info("[MOBILE_DEVICE] Device unregistered. Rows deleted: {$deleted}");
+
+        return response()->json(['status' => 'unregistered', 'deleted' => $deleted]);
     }
 }

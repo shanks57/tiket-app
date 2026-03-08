@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage, deleteToken } from "firebase/messaging";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBpqyX_UZR3ju7GZC7OJoRm0pAgpkKzeyA",
@@ -48,6 +48,26 @@ export const requestForToken = async (passedVapidKey?: string) => {
     } catch (err) {
         console.error('[FIREBASE] Get token failed: ', err);
         return null;
+    }
+};
+
+/**
+ * Delete current token
+ */
+export const deleteAppToken = async () => {
+    if (!messaging) return false;
+
+    try {
+        const currentToken = await getToken(messaging);
+        if (currentToken) {
+            await deleteToken(messaging);
+            console.log('[FIREBASE] Token deleted successfully');
+            return true;
+        }
+        return false;
+    } catch (err) {
+        console.error('[FIREBASE] Delete token failed: ', err);
+        return false;
     }
 };
 
