@@ -8,7 +8,7 @@ import { initializeTheme } from './hooks/use-appearance';
 import { onMessageListener } from './lib/firebase';
 import { toast } from 'sonner';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'SIPERKASA';
 const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 // Expose VAPID key to window for use in components

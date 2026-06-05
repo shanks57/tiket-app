@@ -31,7 +31,11 @@
         }
     </style>
 
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    <title inertia>{{ config('app.name', 'SIPERKASA') }}</title>
+    <meta name="description" content="SIPERKASA - Sistem Laporan Perbaikan Sarana Rumah Sakit. Kelola tiket, lacak kemajuan, dan pastikan koordinasi perawatan sarana rumah sakit yang efisien.">
+    <meta name="application-name" content="{{ config('app.name', 'SIPERKASA') }}">
+    <meta property="og:site_name" content="{{ config('app.name', 'SIPERKASA') }}">
+    <meta property="og:type" content="website">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="icon" href="/favicon.png" sizes="any">
@@ -43,7 +47,7 @@
     <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SIPERKASA">
+    <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'SIPERKASA') }}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="msapplication-TileColor" content="#2563eb">
     <meta name="msapplication-config" content="/browserconfig.xml">
