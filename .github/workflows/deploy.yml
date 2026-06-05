@@ -38,7 +38,7 @@ jobs:
         with:
           server: 193.203.172.8
           username: u440249744.dev
-          password: PenakNgene123!
+          password: PenakNgene1234!
           server-dir: /
           local-dir: ./
           exclude: |
