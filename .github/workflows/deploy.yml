@@ -36,7 +36,7 @@ jobs:
       - name: 🚀 Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.siperkasa.rsudkepohbaru.id
+          server: ftp://193.203.172.8
           username: u440249744.adit
           password: O=t&XTmmD9I9
           server-dir: /
