@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { openInstalledPwaApp } from '@/lib/pwa-open';
 
 const PWA_INSTALLED_KEY = 'pwa-installed';
 
@@ -88,8 +89,7 @@ export function usePWAInstall() {
     };
 
     const openApp = useCallback(() => {
-        const startUrl = `${window.location.origin}/`;
-        window.location.assign(startUrl);
+        openInstalledPwaApp('/');
     }, []);
 
     return {

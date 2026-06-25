@@ -21,13 +21,6 @@ export function PWAInstallButton({
         openApp,
     } = usePWAInstall();
 
-
-    console.log('isRunningInStandalone', isRunningInStandalone);
-    console.log('isInstalledOnDevice', isInstalledOnDevice);
-    console.log('isInstallable', isInstallable);
-    console.log('install function', install);
-    console.log('openApp function', openApp);
-
     if (isRunningInStandalone) {
         return null;
     }

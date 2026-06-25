@@ -3,12 +3,29 @@
     "short_name": "SIPERKASA",
     "description": "Sistem helpdesk komprehensif untuk manajemen tiket rumah sakit dengan fitur komunikasi real-time dan pelacakan kemajuan.",
     "start_url": "/",
+    "id": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#2563eb",
     "orientation": "portrait-primary",
     "scope": "/",
     "lang": "id-ID",
+    "launch_handler": {
+        "client_mode": "navigate-existing"
+    },
+    "protocol_handlers": [
+        {
+            "protocol": "web+siperkasa",
+            "url": "/?pwa_launch=%s"
+        }
+    ],
+    "related_applications": [
+        {
+            "platform": "webapp",
+            "url": "/site.webmanifest",
+            "id": "/"
+        }
+    ],
     "categories": ["medical", "productivity", "business"],
     "icons": [
         {
