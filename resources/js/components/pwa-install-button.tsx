@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Download, Smartphone } from 'lucide-react';
+import { Download, ExternalLink, Smartphone } from 'lucide-react';
 import { usePWAInstall } from '@/hooks/use-pwa-install';
 
 interface PWAInstallButtonProps {
@@ -13,14 +13,43 @@ export function PWAInstallButton({
     size = 'default',
     className = ''
 }: PWAInstallButtonProps) {
-    const { isInstallable, isInstalled, install } = usePWAInstall();
+    const {
+        isInstallable,
+        isInstalledOnDevice,
+        isRunningInStandalone,
+        install,
+        openApp,
+    } = usePWAInstall();
 
-    if (isInstalled) {
-        return null; // Don't show if already installed
+
+    console.log('isRunningInStandalone', isRunningInStandalone);
+    console.log('isInstalledOnDevice', isInstalledOnDevice);
+    console.log('isInstallable', isInstallable);
+    console.log('install function', install);
+    console.log('openApp function', openApp);
+
+    if (isRunningInStandalone) {
+        return null;
+    }
+
+    if (isInstalledOnDevice) {
+        return (
+            <Button
+                variant={variant}
+                size={size}
+                onClick={openApp}
+                className={`flex items-center gap-2 ${className}`}
+            >
+                <Smartphone className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4" />
+                <span className="hidden sm:inline">Buka Aplikasi</span>
+                <span className="sm:hidden">Buka Aplikasi</span>
+            </Button>
+        );
     }
 
     if (!isInstallable) {
-        return null; // Don't show if not installable
+        return null;
     }
 
     return (

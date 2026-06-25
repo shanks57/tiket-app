@@ -1,31 +1,65 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+const PWA_INSTALLED_KEY = 'pwa-installed';
+
+interface InstallPromptEvent extends Event {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+interface InstalledRelatedApp {
+    id: string;
+    platform: string;
+    url?: string;
+}
+
+function isRunningStandalone(): boolean {
+    return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+    );
+}
 
 export function usePWAInstall() {
     const [isInstallable, setIsInstallable] = useState(false);
-    const [isInstalled, setIsInstalled] = useState(false);
-    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [isInstalledOnDevice, setIsInstalledOnDevice] = useState(false);
+    const [isRunningInStandalone, setIsRunningInStandalone] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(null);
 
     useEffect(() => {
-        // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            setIsInstalled(true);
+        if (isRunningStandalone()) {
+            setIsRunningInStandalone(true);
+            setIsInstalledOnDevice(true);
             return;
         }
 
-        // Listen for install prompt
-        const handleBeforeInstallPrompt = (e: any) => {
-            console.log('[PWA] Install prompt available');
+        if (localStorage.getItem(PWA_INSTALLED_KEY) === 'true') {
+            setIsInstalledOnDevice(true);
+        }
+
+        if ('getInstalledRelatedApps' in navigator) {
+            (navigator as Navigator & {
+                getInstalledRelatedApps: () => Promise<InstalledRelatedApp[]>;
+            }).getInstalledRelatedApps().then((apps) => {
+                if (apps.length > 0) {
+                    setIsInstalledOnDevice(true);
+                    localStorage.setItem(PWA_INSTALLED_KEY, 'true');
+                }
+            });
+        }
+
+        const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault();
-            setDeferredPrompt(e);
+            setDeferredPrompt(e as InstallPromptEvent);
             setIsInstallable(true);
         };
 
-        // Listen for successful installation
         const handleAppInstalled = () => {
-            console.log('[PWA] App installed');
-            setIsInstalled(true);
+            setIsInstalledOnDevice(true);
             setIsInstallable(false);
             setDeferredPrompt(null);
+            localStorage.setItem(PWA_INSTALLED_KEY, 'true');
         };
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -41,24 +75,28 @@ export function usePWAInstall() {
         if (!deferredPrompt) return;
 
         try {
-            deferredPrompt.prompt();
+            await deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
 
             if (outcome === 'accepted') {
-                console.log('[PWA] User accepted install');
                 setIsInstallable(false);
                 setDeferredPrompt(null);
-            } else {
-                console.log('[PWA] User dismissed install');
             }
         } catch (error) {
             console.error('[PWA] Install error:', error);
         }
     };
 
+    const openApp = useCallback(() => {
+        const startUrl = `${window.location.origin}/`;
+        window.location.assign(startUrl);
+    }, []);
+
     return {
         isInstallable,
-        isInstalled,
-        install
+        isInstalledOnDevice,
+        isRunningInStandalone,
+        install,
+        openApp,
     };
 }
